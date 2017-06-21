@@ -8,32 +8,41 @@ const cheerio = require("cheerio");
 const request = require("request");
 const Positioner = require("electron-positioner");
 
-let win;
+let browserWindow;
 let jsonData = { image: "", title: "", description: "", timeLeft: "" };
 
 function createWindow() {
-    win = new BrowserWindow({ width: 720, height: 270, frame: false })
-   
+    browserWindow = new BrowserWindow({ width: 730, height: 270, frame: false, skipTaskbar: true })
 
-    win.loadURL(url.format({
+
+    browserWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),
         protocol: 'file:',
         slashes: true
     }))
 
-    win.webContents.openDevTools()
+    browserWindow.webContents.openDevTools();
 
-    win.on('closed', () => {
-        win = null
+    browserWindow.on('closed', () => {
+        browserWindow = null
     })
 }
 
 app.on('ready', () => {
     createWindow();
     tray = new Tray("book.png");
+    tray.on('click', () => {
+        browserWindow.isVisible() ? browserWindow.hide() : browserWindow.show();
+    })
+    const contextMenu = Menu.buildFromTemplate([
+        { label: 'Reload', role: 'reload' },
+        { label: 'Exit', role: 'quit' }
+    ]);
+
+    tray.setContextMenu(contextMenu);
+
     let bounds = tray.getBounds();
-    
-    let positioner = new Positioner(win);
+    let positioner = new Positioner(browserWindow);
     positioner.move('trayBottomRight', bounds);
 })
 
@@ -66,7 +75,7 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-    if (win === null) {
+    if (browserWindow === null) {
         createWindow();
     }
 })
