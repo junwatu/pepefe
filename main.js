@@ -12,7 +12,7 @@ let win;
 let jsonData = { image: "", title: "", description: "", timeLeft: "" };
 
 function createWindow() {
-    win = new BrowserWindow({ width: 680, height: 315, frame: false })
+    win = new BrowserWindow({ width: 720, height: 270, frame: false })
    
 
     win.loadURL(url.format({
