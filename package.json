@@ -1,0 +1,21 @@
+{
+  "name": "packtpub-free-learning-notification",
+  "version": "1.0.0",
+  "description": "Notifikasi untuk ebook gratis dari PacktPub",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ebook",
+    "free",
+    "packtpub"
+  ],
+  "author": "Equan Pr.",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.1",
+    "express": "^4.15.3",
+    "request": "^2.81.0"
+  }
+}
