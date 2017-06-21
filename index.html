@@ -14,8 +14,8 @@
         }
 
         .main {
-           margin:5px 0;
-           padding: 5px 5px;
+            margin: 5px 0;
+            padding: 5px 5px;
         }
 
         .cover {
@@ -38,7 +38,7 @@
 
 <body>
     <div id="main-container" class="main">
-        <img id="book-cover" class="cover"/>
+        <img id="book-cover" class="cover" />
 
         <div class="submain">
             <h2 id="book-title"></h2>
@@ -55,10 +55,14 @@
     ipcRenderer.send('asyncData', 'init');
 
     ipcRenderer.on('asyncMessage', (event, arg) => {
+        if (arg != null) {
+            document.getElementById("book-cover").src = "https:" + arg.image;
+            document.getElementById("book-title").innerHTML = arg.title;
+            document.getElementById("book-description").innerHTML = arg.description;
 
-        document.getElementById("book-cover").src = "https:" + arg.image;
-        document.getElementById("book-title").innerHTML = arg.title;
-        document.getElementById("book-description").innerHTML = arg.description;
+        } else {
+            document.getElementById("book-title").innerHTML = "No Connection!";
+        }
     });
 
     function openBrowser() {
