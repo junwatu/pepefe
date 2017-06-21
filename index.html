@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Packtpub Free Ebook</title>
+    <style>
+        body {
+            background: #cddc39;
+        }
+        
+        .main {
+            float: left;
+            max-width: 50%;
+            padding: 10px 10px;
+        }
+
+        .submain {
+            padding: 5px 10px;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div id="main-container">
+        <img id="book-cover" class="main" />
+
+        <div class="submain">
+            <h2 id="book-title"></h2>
+            <p id="book-description"></p>
+            <button>Gratis</button>
+        </div>
+    </div>
+</body>
+<script>
+    const { ipcRenderer } = require('electron');
+    // Trigger
+    ipcRenderer.send('asyncData', 'init');
+
+    ipcRenderer.on('asyncMessage', (event, arg) => {
+    
+        document.getElementById("book-cover").src = "https:" + arg.image;
+        document.getElementById("book-title").innerHTML = arg.title;
+        document.getElementById("book-description").innerHTML = arg.description;
+    });
+
+</script>
+
+</html>

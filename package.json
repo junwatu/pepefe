@@ -2,7 +2,7 @@
   "name": "packtpub-free-learning-notification",
   "version": "1.0.0",
   "description": "Notifikasi untuk ebook gratis dari PacktPub",
-  "main": "app.js",
+  "main": "main.js",
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,6 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "cheerio": "^1.0.0-rc.1",
+    "electron": "^1.6.11",
     "express": "^4.15.3",
     "request": "^2.81.0"
   }
