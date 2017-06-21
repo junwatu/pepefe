@@ -6,12 +6,14 @@ const path = require('path');
 const url = require('url');
 const cheerio = require("cheerio");
 const request = require("request");
+const Positioner = require("electron-positioner");
 
 let win;
 let jsonData = { image: "", title: "", description: "", timeLeft: "" };
 
 function createWindow() {
     win = new BrowserWindow({ width: 680, height: 315, frame: false })
+   
 
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),
@@ -29,6 +31,10 @@ function createWindow() {
 app.on('ready', () => {
     createWindow();
     tray = new Tray("book.png");
+    let bounds = tray.getBounds();
+    
+    let positioner = new Positioner(win);
+    positioner.move('trayBottomRight', bounds);
 })
 
 ipcMain.on('asyncData', (event, arg) => {
