@@ -14,13 +14,15 @@
         }
 
         .main {
-           
+           margin:5px 0;
+           padding: 5px 5px;
         }
 
         .cover {
             float: left;
-            max-width: 50%;
+            width: 200px;
             padding: 0px 10px;
+            object-fit: contain;
         }
 
         .submain {
@@ -29,19 +31,19 @@
 
         .linkButton {
             height: 35px;
-            width: 75px;
+            width: auto;
         }
     </style>
 </head>
 
 <body>
     <div id="main-container" class="main">
-        <img id="book-cover" class="cover" />
+        <img id="book-cover" class="cover"/>
 
         <div class="submain">
             <h2 id="book-title"></h2>
             <p id="book-description"></p>
-            <button class="linkButton" onclick="openBrowser()">Gratis</button>
+            <button class="linkButton" onclick="openBrowser()">Free Learning</button>
         </div>
     </div>
 </body>
