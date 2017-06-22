@@ -20,7 +20,7 @@
 
         .cover {
             float: left;
-            width: 200px;
+            width: 180px;
             padding: 0px 10px;
             object-fit: contain;
         }
@@ -43,7 +43,7 @@
         <div class="submain">
             <h2 id="book-title"></h2>
             <p id="book-description"></p>
-            <button class="linkButton" onclick="openBrowser()">Free Learning</button>
+            <button class="linkButton" onclick="openBrowser()">Free Ebook</button>
         </div>
     </div>
 </body>
@@ -55,6 +55,7 @@
     ipcRenderer.send('asyncData', 'init');
 
     ipcRenderer.on('asyncMessage', (event, arg) => {
+        
         if (arg != null) {
             document.getElementById("book-cover").src = "https:" + arg.image;
             document.getElementById("book-title").innerHTML = arg.title;
