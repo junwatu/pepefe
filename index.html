@@ -43,7 +43,7 @@
         <div class="submain">
             <h2 id="book-title"></h2>
             <p id="book-description"></p>
-            <button class="linkButton" onclick="openBrowser()">Free Ebook</button>
+            <button class="linkButton" onclick="openBrowser()" id="dotdLink">Free Ebook</button>
         </div>
     </div>
 </body>
@@ -51,16 +51,17 @@
     const { ipcRenderer } = require('electron');
     const shell = require('electron').shell;
 
+    document.getElementById('dotdLink').style.display = "none";
     // Trigger
     ipcRenderer.send('asyncData', 'init');
 
     ipcRenderer.on('asyncMessage', (event, arg) => {
-        
+
         if (arg != null) {
             document.getElementById("book-cover").src = "https:" + arg.image;
             document.getElementById("book-title").innerHTML = arg.title;
             document.getElementById("book-description").innerHTML = arg.description;
-
+            document.getElementById('dotdLink').style.display = "block";
         } else {
             document.getElementById("book-title").innerHTML = "No Connection!";
         }
