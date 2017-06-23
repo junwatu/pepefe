@@ -7,9 +7,16 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Packtpub Free Ebook</title>
     <style>
+        html {
+            height: 100%;
+        }
         h2 {
             padding: 0px 0px;
             margin: 5px 0px;
+        }
+
+        body {
+            height: 100%;
         }
 
         body,
@@ -29,7 +36,6 @@
             padding: 0px 0px;
             object-fit: contain;
             margin: 5px 15px 5px 5px;
-            
         }
 
         .submain {
@@ -57,10 +63,20 @@
         .timeLeft {
             padding-top: 25px;
         }
+
+        .svg {
+            margin-left: auto;
+            margin-right: auto;
+            position: absolute;
+            left: 70px;
+            top: 80px;
+            z-index: 1;
+        }
     </style>
 </head>
 
 <body>
+    <img src="svg-loaders/ball-triangle.svg" class="svg" id="loaderUI" />
     <div id="main-container" class="main">
         <img id="book-cover" class="cover" />
 
@@ -79,7 +95,7 @@
     const shell = require('electron').shell;
 
     document.getElementById('dotdLink').style.display = "none";
-    
+
     // Trigger
     ipcRenderer.send('asyncData', 'init');
 
@@ -93,6 +109,8 @@
         } else {
             document.getElementById("book-title").innerHTML = "No Connection!";
         }
+
+        ipcRenderer.send('hiddenLoader', "true");
     });
 
     function openBrowser() {
