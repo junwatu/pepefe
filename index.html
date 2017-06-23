@@ -7,22 +7,29 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Packtpub Free Ebook</title>
     <style>
-        body {
-            background: #cddc39;
+        h2 {
+            padding: 0px 0px;
+            margin: 5px 0px;
+        }
+
+        body,
+        p {
             padding: 0px 0px;
             margin: 0px 0px;
         }
 
         .main {
-            margin: 5px 0;
+            margin: 0px 0px;
             padding: 5px 5px;
         }
 
         .cover {
             float: left;
             width: 180px;
-            padding: 0px 10px;
+            padding: 0px 0px;
             object-fit: contain;
+            margin: 5px 15px 5px 5px;
+            
         }
 
         .submain {
@@ -32,6 +39,23 @@
         .linkButton {
             height: 35px;
             width: auto;
+            float: left;
+            background: #4479BA;
+            color: #FFF;
+            border: 2px solid;
+        }
+
+        .timeLeft p {
+            font-size: 25px;
+            font-weight: bold;
+            padding: 0px 10px;
+            margin: 0px 0px;
+            float: right;
+            color: crimson;
+        }
+
+        .timeLeft {
+            padding-top: 25px;
         }
     </style>
 </head>
@@ -43,7 +67,10 @@
         <div class="submain">
             <h2 id="book-title"></h2>
             <p id="book-description"></p>
-            <button class="linkButton" onclick="openBrowser()" id="dotdLink">Free Ebook</button>
+            <div class="timeLeft">
+                <button class="linkButton" onclick="openBrowser()" id="dotdLink">Free Ebook</button>
+                <p id="book-time-left"></p>
+            </div>
         </div>
     </div>
 </body>
