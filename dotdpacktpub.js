@@ -11,18 +11,7 @@ function DOTDPacktPub() {
 
         request(url, (error, response, html) => {
             if (!error) {
-                let $ = cheerio.load(html);
-
-                let dotdImage = $(".dotd-main-book-image").children().children().last().attr("data-original");
-                let dotdTitle = $(".dotd-title").children().text();
-                
-                let dotdDescription = $(".dotd-main-book-summary").children().last().prev().text();
-
-                jsonData.image = dotdImage;
-                jsonData.title = dotdTitle.trim();
-                jsonData.description = dotdDescription.trim();
-
-                resolve(jsonData);
+                resolve(queryData(html));
             } else {
                 reject(error);
             }
@@ -30,8 +19,25 @@ function DOTDPacktPub() {
     })
 }
 
-function processHTML(htmlData) {
+function queryData(html) {
+    let $ = cheerio.load(html);
+
+    let dotdImage = $(".dotd-main-book-image").children().children().last().attr("data-original");
+    let dotdTitle = $(".dotd-title").children().text();
+    let dotdTimeLeft = $(".packt-js-countdown").text();
+    let dotdDescription = $(".dotd-main-book-summary").children().last().prev().text();
+
+    jsonData.image = dotdImage;
+    jsonData.title = dotdTitle.trim();
+    jsonData.description = dotdDescription.trim();
+    jsonData.timeLeft = dotdTimeLeft;
+
+    return jsonData;
+}
+
+function processHTML(arg) {
+    let htmlData = queryData(arg);
     return htmlData;
 }
 
-module.exports = { dotdPacktPub: DOTDPacktPub , processHTML: processHTML, URL: url};
+module.exports = { dotdPacktPub: DOTDPacktPub, processHTML: processHTML, URL: url };
