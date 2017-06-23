@@ -13,7 +13,8 @@ let dotdBrowserWindow;
 let timeLeft;
 let updateTimeLeft;
 
-let reload = false;
+let timeReload = false;
+let scheduledReload = false;
 
 let jsonData = { image: "", title: "", description: "", timeLeft: "" };
 
@@ -30,7 +31,9 @@ function createWindow() {
         browserWindow = null
     })
 
-    browserWindow.webContents.executeJavaScript(`document.body.style.backgroundColor="#${randomColor()}"`);    
+    // Performance (?)
+    let randomAwesomeColor = `document.body.style.background="linear-gradient(135deg, #${randomColor()} 0%, #${randomColor()} 100%)";`;
+    browserWindow.webContents.executeJavaScript(randomAwesomeColor);
 }
 
 function loadDOTD() {
@@ -39,20 +42,27 @@ function loadDOTD() {
 }
 
 function updateInterval() {
-    let update = setInterval(() => {
-        updateData();
+    let updateTime = setInterval(() => {
+        try {
+            dotdBrowserWindow.webContents.executeJavaScript('require("electron").ipcRenderer.send("HTMLData", document.getElementsByClassName("packt-js-countdown")[0].innerHTML);');
+        } catch (error) {
+            console.log(error);
+        }
     }, 1000);
 
-    return update;
+    return updateTime;
 }
 
 function updateData() {
-    
-    if(dotdBrowserWindow != null){
+
+    if (dotdBrowserWindow != null) {
         // Should check force reload flag, schedule time to reload.
-        // if(reload || scheduleReload) {  update all} else { update time only }
-        //dotdBrowserWindow.webContents.executeJavaScript('require("electron").ipcRenderer.send("HTMLData", document.getElementsByClassName("packt-js-countdown")[0].innerHTML);');
-        dotdBrowserWindow.webContents.executeJavaScript('require("electron").ipcRenderer.send("HTMLData", document.body.innerHTML);');
+        if (timeReload) {
+            updateTimeLeft = updateInterval();
+
+        } else {
+            dotdBrowserWindow.webContents.executeJavaScript('require("electron").ipcRenderer.send("HTMLData", document.body.innerHTML);');
+        }
     }
 }
 
@@ -62,19 +72,26 @@ async function getDOTD() {
 }
 
 ipcMain.on('asyncData', (event, arg) => {
-    
-    dotdBrowserWindow.webContents.on('dom-ready', (event, url) => {
-        updateTimeLeft = updateInterval();
-    })
 
+    dotdBrowserWindow.webContents.on('dom-ready', (event, url) => {
+        updateData();
+    })
 })
 
 ipcMain.on('HTMLData', (event, arg) => {
-    
-    browserWindow.webContents.send('asyncMessage', site.processHTML(arg));
-    // timeLeft = site.processHTML(arg);
-    // let stringCommand = `document.getElementById("book-time-left").innerHTML="${timeLeft}"`;
-    // browserWindow.webContents.executeJavaScript(stringCommand);
+   
+    if (timeReload) {
+        let stringCommand = `document.getElementById("book-time-left").innerHTML="${arg}"`;
+        browserWindow.webContents.executeJavaScript(stringCommand);
+    } else {
+        browserWindow.webContents.send('asyncMessage', site.processHTML(arg));
+    }
+})
+
+ipcMain.on('hiddenLoader', () => {
+    browserWindow.webContents.executeJavaScript('document.getElementById("loaderUI").style.display = "none";');
+    timeReload = true;
+    updateData();
 })
 
 app.on('ready', () => {
@@ -82,15 +99,15 @@ app.on('ready', () => {
     loadDOTD();
 
     createWindow();
-    
+
     // showDevTools();
 
     tray = new Tray("book.png");
     tray.on('click', () => {
-        if (browserWindow.isVisible()) { 
+        if (browserWindow.isVisible()) {
             browserWindow.hide();
             clearInterval(updateTimeLeft);
-        } else { 
+        } else {
             browserWindow.show();
             updateTimeLeft = updateInterval();
         };
@@ -100,7 +117,7 @@ app.on('ready', () => {
         { label: 'DevTools', click: showDevTools },
         { label: 'Settings' },
         { label: 'Autostart', type: 'checkbox' },
-        
+
         // No ()
         { label: 'Exit', click: quitAllWindows }
     ]);
