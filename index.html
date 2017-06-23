@@ -79,16 +79,17 @@
     const shell = require('electron').shell;
 
     document.getElementById('dotdLink').style.display = "none";
+    
     // Trigger
     ipcRenderer.send('asyncData', 'init');
 
     ipcRenderer.on('asyncMessage', (event, arg) => {
-
         if (arg != null) {
             document.getElementById("book-cover").src = "https:" + arg.image;
             document.getElementById("book-title").innerHTML = arg.title;
             document.getElementById("book-description").innerHTML = arg.description;
             document.getElementById('dotdLink').style.display = "block";
+            document.getElementById("book-time-left").innerHTML = arg.timeLeft;
         } else {
             document.getElementById("book-title").innerHTML = "No Connection!";
         }
