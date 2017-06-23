@@ -15,7 +15,7 @@ function DOTDPacktPub() {
 
                 let dotdImage = $(".dotd-main-book-image").children().children().last().attr("data-original");
                 let dotdTitle = $(".dotd-title").children().text();
-                let dotdTime = $(".eighteen-days-countdown-bar").html();
+                
                 let dotdDescription = $(".dotd-main-book-summary").children().last().prev().text();
 
                 jsonData.image = dotdImage;
@@ -30,4 +30,8 @@ function DOTDPacktPub() {
     })
 }
 
-module.exports = { dotdPacktPub: DOTDPacktPub };
+function processHTML(htmlData) {
+    return htmlData;
+}
+
+module.exports = { dotdPacktPub: DOTDPacktPub , processHTML: processHTML, URL: url};
