@@ -7,9 +7,22 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Packtpub Free Ebook</title>
     <style>
+        @keyframes fadein {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
         html {
             height: 100%;
+            animation: fadein 0.5s;
+            -webkit-user-select: none;
+            /*-webkit-app-region: drag;*/
         }
+
         h2 {
             padding: 0px 0px;
             margin: 5px 0px;
@@ -23,6 +36,8 @@
         p {
             padding: 0px 0px;
             margin: 0px 0px;
+            text-align: justify;
+            overflow: hidden;
         }
 
         .main {
@@ -54,14 +69,14 @@
         .timeLeft p {
             font-size: 25px;
             font-weight: bold;
-            padding: 0px 10px;
+            padding: 5px 10px;
             margin: 0px 0px;
             float: right;
             color: crimson;
         }
 
         .timeLeft {
-            padding-top: 25px;
+            padding-top: 7px;
         }
 
         .svg {
@@ -71,6 +86,15 @@
             left: 70px;
             top: 80px;
             z-index: 1;
+        }
+
+        .description {
+            padding: 0px 0px;
+            height: 106px;
+        }
+
+        .scroller {
+            height: 7px;
         }
     </style>
 </head>
@@ -82,7 +106,9 @@
 
         <div class="submain">
             <h2 id="book-title"></h2>
-            <p id="book-description"></p>
+            <div onmouseover="scroll_up();" onmouseout="stop_scroll();" class="scroller"></div>
+            <p id="book-description" class="description"></p>
+            <div  onmouseover="scroll_down();" onmouseout="stop_scroll();" class="scroller"></div>
             <div class="timeLeft">
                 <button class="linkButton" onclick="openBrowser()" id="dotdLink">Free Ebook</button>
                 <p id="book-time-left"></p>
@@ -117,6 +143,33 @@
         shell.openExternal("https://www.packtpub.com/packt/offers/free-learning");
     }
 
-</script>
+    // https://bytes.com/topic/javascript/answers/791790-div-scroll-mouseover
+    
+    var scrolling = null;
+ 
+    function scroll_up() {
+        var d = document.getElementById('book-description');
+ 
+        d.scrollTop = d.scrollTop - 5;
+ 
+        scrolling = window.setTimeout(function() {
+            scroll_up();
+        }, 100);
+    }
+ 
+    function scroll_down() {
+        var d = document.getElementById('book-description');
+ 
+        d.scrollTop = d.scrollTop + 5;
+ 
+        scrolling = window.setTimeout(function() {
+            scroll_down();
+        }, 100);
+    }
+ 
+    function stop_scroll() {
+        window.clearTimeout(scrolling);
+    }
 
+</script>
 </html>
