@@ -3,10 +3,12 @@
 const { app, BrowserWindow, ipcMain, Menu, Tray } = require('electron');
 const path = require('path');
 const url = require('url');
+const schedule = require("node-schedule");
 const Positioner = require("electron-positioner");
 
 const site = require("./dotdpacktpub");
 const { randomColor } = require("./randomcolor");
+const Store = require('./store');
 
 let browserWindow;
 let dotdBrowserWindow;
@@ -18,8 +20,22 @@ let scheduledReload = false;
 
 let jsonData = { image: "", title: "", description: "", timeLeft: "" };
 
+let rule = new schedule.RecurrenceRule();
+rule.dayOfWeek = [0, new schedule.Range(0, 6)];
+rule.hour = 7;
+rule.minute = 45;
+
+function scheduledJob() {
+    let z = schedule.scheduleJob(rule, () => {
+        timeReload = false;
+        updateData();
+    })
+
+    return z;
+}
+
 function createWindow() {
-    browserWindow = new BrowserWindow({ width: 730, height: 250, frame: false, skipTaskbar: true });
+    browserWindow = new BrowserWindow({ width: 730, height: 245, frame: false, skipTaskbar: true });
 
     browserWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),
@@ -79,7 +95,7 @@ ipcMain.on('asyncData', (event, arg) => {
 })
 
 ipcMain.on('HTMLData', (event, arg) => {
-   
+
     if (timeReload) {
         let stringCommand = `document.getElementById("book-time-left").innerHTML="${arg}"`;
         browserWindow.webContents.executeJavaScript(stringCommand);
@@ -101,6 +117,7 @@ app.on('ready', () => {
     createWindow();
 
     // showDevTools();
+    scheduledJob(null);
 
     tray = new Tray("book.png");
     tray.on('click', () => {
@@ -136,6 +153,9 @@ app.on('ready', () => {
     let bounds = tray.getBounds();
     let positioner = new Positioner(browserWindow);
     positioner.move('trayBottomRight', bounds);
+
+    //let store = new Store();
+    
 })
 
 app.on('window-all-closed', () => {
