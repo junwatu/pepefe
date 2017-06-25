@@ -1,7 +1,7 @@
 {
-  "name": "packtpub-free-learning-notification",
+  "name": "packtpub-free-ebook",
   "version": "1.0.0",
-  "description": "Notifikasi untuk ebook gratis dari PacktPub",
+  "description": "Free ebook desktop notification from PacktPub",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -10,6 +10,8 @@
   "keywords": [
     "ebook",
     "free",
+    "desktop",
+    "electron",
     "packtpub"
   ],
   "author": "Equan Pr.",
