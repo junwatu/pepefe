@@ -40,7 +40,15 @@ function createWindow(onlineStatus) {
     // Performance (?)
     let randomAwesomeColor = `document.body.style.background="linear-gradient(135deg, #${randomColor()} 0%, #${randomColor()} 100%)";`;
     browserWindow.webContents.executeJavaScript(randomAwesomeColor);
-
+    
+    const store = new Store({
+        configName: "user-preferences",
+        defaults: {
+            "autostart": false,
+            "autohide": true
+        }
+    });
+    
     if (onlineStatus === true) {
 
         browserWindow.loadURL(url.format({
@@ -76,12 +84,22 @@ function createWindow(onlineStatus) {
 
     const contextMenu = Menu.buildFromTemplate([
         { label: 'DevTools', click: showDevTools },
-        { label: 'Settings' },
-        { label: 'Autostart', type: 'checkbox' },
-
+        { label: 'Set Time' },
+        { label: 'Autostart', type: 'checkbox', click: toggleAutostart },
+        { label: 'Autohide', type: 'checkbox', click: toggleAutohide },
         // No ()
         { label: 'Exit', click: quitAllWindows }
     ]);
+
+    function toggleAutostart() {
+        let autostart = store.get("autostart");
+        store.set("autostart", !autostart);
+    }
+
+    function toggleAutohide() {
+        let autohide = store.get("autohide");
+        store.set("autohide", !autohide);
+    }
 
     function quitAllWindows() {
         dotdBrowserWindow.destroy();
@@ -98,13 +116,18 @@ function createWindow(onlineStatus) {
     let positioner = new Positioner(browserWindow);
     positioner.move('trayBottomRight', bounds);
 
-    const store = new Store({
-        configName: "preferences",
-        defaults: {
-            "autostart": false,
-            "autohide": true
+    contextMenu.items.forEach((element)  => {
+        
+        if(element.label === 'Autohide') {
+            element.checked = store.get('autohide');
         }
-    });
+
+        if(element.label === 'Autostart') {
+            element.checked = store.get('autostart');
+        }
+
+    }, this);
+
 }
 
 function loadDOTD() {
@@ -166,7 +189,7 @@ ipcMain.on('hiddenLoader', () => {
 })
 
 app.on('ready', () => {
-    
+
     loadDOTD();
 
     getOnlineStatus().then((status) => {
