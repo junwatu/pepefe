@@ -21,6 +21,10 @@ let scheduledReload = false;
 
 let jsonData = { image: "", title: "", description: "", timeLeft: "" };
 
+let autohideRuntimeTimer;
+let autohideInitTimer;
+let autohideToggleTimer;
+
 let rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [0, new schedule.Range(0, 6)];
 rule.hour = 7;
@@ -35,12 +39,24 @@ function scheduledJob() {
     return z;
 }
 
+function autoHideTimer() {
+    let x = setInterval(() => {
+        if (browserWindow.isVisible()) {
+            browserWindow.hide();
+            clearInterval(updateTimeLeft);
+        }
+    }, 30000);
+
+
+    return x;
+}
+
 function createWindow(onlineStatus) {
     browserWindow = new BrowserWindow({ width: 730, height: 245, frame: false, skipTaskbar: true });
     // Performance (?)
     let randomAwesomeColor = `document.body.style.background="linear-gradient(135deg, #${randomColor()} 0%, #${randomColor()} 100%)";`;
     browserWindow.webContents.executeJavaScript(randomAwesomeColor);
-    
+
     const store = new Store({
         configName: "user-preferences",
         defaults: {
@@ -48,7 +64,7 @@ function createWindow(onlineStatus) {
             "autohide": true
         }
     });
-    
+
     if (onlineStatus === true) {
 
         browserWindow.loadURL(url.format({
@@ -73,13 +89,7 @@ function createWindow(onlineStatus) {
 
     tray = new Tray("book.png");
     tray.on('click', () => {
-        if (browserWindow.isVisible()) {
-            browserWindow.hide();
-            clearInterval(updateTimeLeft);
-        } else {
-            browserWindow.show();
-            updateTimeLeft = updateInterval();
-        };
+        showHide();
     })
 
     const contextMenu = Menu.buildFromTemplate([
@@ -99,6 +109,48 @@ function createWindow(onlineStatus) {
     function toggleAutohide() {
         let autohide = store.get("autohide");
         store.set("autohide", !autohide);
+
+        if (browserWindow.isVisible() && !autohide === true) {
+            autohideToggleTimer = autoHideTimer();
+            console.log("[AutohideMenu] Will autohide...");
+        } else {
+            if (autohideToggleTimer != null) {
+                clearInterval(autohideToggleTimer);
+                console.log("[AutohideToggle] Reset...");
+            }
+
+            if (autohideRuntimeTimer != null) {
+                clearInterval(autohideRuntimeTimer);
+                console.log("[AutohideRuntime] Reset...");
+            }
+
+            if (autohideInitTimer != null) {
+                clearInterval(autohideInitTimer);
+                console.log("[AutohideInit] Reset...");
+            }
+        }
+    }
+
+    function showHide() {
+
+        let autohideRuntime = store.get("autohide");
+
+        if (browserWindow.isVisible()) {
+            browserWindow.hide();
+            clearInterval(updateTimeLeft);
+
+            if (autohideRuntime === true) {
+                clearInterval(autohideRuntimeTimer);
+            }
+        } else {
+            browserWindow.show();
+            updateTimeLeft = updateInterval();
+
+            if (autohideRuntime === true) {
+                autohideRuntimeTimer = autoHideTimer();
+                console.log("[ShowHideIcon] Will autohide...");
+            }
+        };
     }
 
     function quitAllWindows() {
@@ -116,13 +168,19 @@ function createWindow(onlineStatus) {
     let positioner = new Positioner(browserWindow);
     positioner.move('trayBottomRight', bounds);
 
-    contextMenu.items.forEach((element)  => {
-        
-        if(element.label === 'Autohide') {
-            element.checked = store.get('autohide');
+    contextMenu.items.forEach((element) => {
+
+        if (element.label === 'Autohide') {
+            let autohideInit = store.get('autohide');
+            element.checked = autohideInit;
+
+            if (autohideInit === true) {
+                autohideInitTimer = autoHideTimer();
+                console.log('[Init] Will close automatically...');
+            }
         }
 
-        if(element.label === 'Autostart') {
+        if (element.label === 'Autostart') {
             element.checked = store.get('autostart');
         }
 
