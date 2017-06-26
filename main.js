@@ -5,6 +5,7 @@ const path = require('path');
 const url = require('url');
 const schedule = require("node-schedule");
 const Positioner = require("electron-positioner");
+const isOnline = require("is-online");
 
 const site = require("./dotdpacktpub");
 const { randomColor } = require("./randomcolor");
@@ -34,90 +35,33 @@ function scheduledJob() {
     return z;
 }
 
-function createWindow() {
+function createWindow(onlineStatus) {
     browserWindow = new BrowserWindow({ width: 730, height: 245, frame: false, skipTaskbar: true });
-
-    browserWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
-        protocol: 'file:',
-        slashes: true
-    }))
-
-    browserWindow.on('closed', () => {
-        browserWindow = null
-    })
-
     // Performance (?)
     let randomAwesomeColor = `document.body.style.background="linear-gradient(135deg, #${randomColor()} 0%, #${randomColor()} 100%)";`;
     browserWindow.webContents.executeJavaScript(randomAwesomeColor);
-}
 
-function loadDOTD() {
-    dotdBrowserWindow = new BrowserWindow({ show: false });
-    dotdBrowserWindow.loadURL(site.URL);
-}
+    if (onlineStatus === true) {
 
-function updateInterval() {
-    let updateTime = setInterval(() => {
-        try {
-            dotdBrowserWindow.webContents.executeJavaScript('require("electron").ipcRenderer.send("HTMLData", document.getElementsByClassName("packt-js-countdown")[0].innerHTML);');
-        } catch (error) {
-            console.log(error);
-        }
-    }, 1000);
+        browserWindow.loadURL(url.format({
+            pathname: path.join(__dirname, 'index.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
 
-    return updateTime;
-}
+        scheduledJob(null);
 
-function updateData() {
-
-    if (dotdBrowserWindow != null) {
-        // Should check force reload flag, schedule time to reload.
-        if (timeReload) {
-            updateTimeLeft = updateInterval();
-
-        } else {
-            dotdBrowserWindow.webContents.executeJavaScript('require("electron").ipcRenderer.send("HTMLData", document.body.innerHTML);');
-        }
-    }
-}
-
-async function getDOTD() {
-    let data = await site.dotdPacktPub();
-    return data;
-}
-
-ipcMain.on('asyncData', (event, arg) => {
-
-    dotdBrowserWindow.webContents.on('dom-ready', (event, url) => {
-        updateData();
-    })
-})
-
-ipcMain.on('HTMLData', (event, arg) => {
-
-    if (timeReload) {
-        let stringCommand = `document.getElementById("book-time-left").innerHTML="${arg}"`;
-        browserWindow.webContents.executeJavaScript(stringCommand);
     } else {
-        browserWindow.webContents.send('asyncMessage', site.processHTML(arg));
+        browserWindow.loadURL(url.format({
+            pathname: path.join(__dirname, 'offline.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
     }
-})
 
-ipcMain.on('hiddenLoader', () => {
-    browserWindow.webContents.executeJavaScript('document.getElementById("loaderUI").style.display = "none";');
-    timeReload = true;
-    updateData();
-})
-
-app.on('ready', () => {
-    // Should be scheduled
-    loadDOTD();
-
-    createWindow();
-
-    // showDevTools();
-    scheduledJob(null);
+    browserWindow.on('closed', () => {
+        browserWindow = null;
+    })
 
     tray = new Tray("book.png");
     tray.on('click', () => {
@@ -154,8 +98,85 @@ app.on('ready', () => {
     let positioner = new Positioner(browserWindow);
     positioner.move('trayBottomRight', bounds);
 
-    //let store = new Store();
+    const store = new Store({
+        configName: "preferences",
+        defaults: {
+            "autostart": false,
+            "autohide": true
+        }
+    });
+}
+
+function loadDOTD() {
+    dotdBrowserWindow = new BrowserWindow({ show: false });
+    dotdBrowserWindow.loadURL(site.URL);
+}
+
+function updateInterval() {
+    let updateTime = setInterval(() => {
+        try {
+            dotdBrowserWindow.webContents.executeJavaScript('require("electron").ipcRenderer.send("HTMLData", document.getElementsByClassName("packt-js-countdown")[0].innerHTML);');
+        } catch (error) {
+            console.log(error);
+        }
+    }, 1000);
+
+    return updateTime;
+}
+
+function updateData() {
+
+    if (dotdBrowserWindow != null) {
+        // Should check force reload flag, schedule time to reload.
+        if (timeReload) {
+            updateTimeLeft = updateInterval();
+
+        } else {
+            dotdBrowserWindow.webContents.executeJavaScript('require("electron").ipcRenderer.send("HTMLData", document.body.innerHTML);');
+        }
+    }
+}
+
+async function getOnlineStatus() {
+    let onlineStatus = await isOnline();
+    return onlineStatus;
+}
+
+ipcMain.on('asyncData', (event, arg) => {
+
+    dotdBrowserWindow.webContents.on('dom-ready', (event, url) => {
+        updateData();
+    })
+})
+
+ipcMain.on('HTMLData', (event, arg) => {
+
+    if (timeReload) {
+        let stringCommand = `document.getElementById("book-time-left").innerHTML="${arg}"`;
+        browserWindow.webContents.executeJavaScript(stringCommand);
+    } else {
+        browserWindow.webContents.send('asyncMessage', site.processHTML(arg));
+    }
+})
+
+ipcMain.on('hiddenLoader', () => {
+    browserWindow.webContents.executeJavaScript('document.getElementById("loaderUI").style.display = "none";');
+    timeReload = true;
+    updateData();
+})
+
+app.on('ready', () => {
     
+    loadDOTD();
+
+    getOnlineStatus().then((status) => {
+        if (status === true) {
+            createWindow(true);
+        }
+        else {
+            createWindow(false);
+        }
+    });
 })
 
 app.on('window-all-closed', () => {
