@@ -72,13 +72,19 @@
             font-weight: bold;
             padding: 5px 10px;
             margin: 0px 0px;
-            float: right;
+            /*float: right;*/
             color: crimson;
+            left: 407px;
+            position: absolute;
         }
 
         .timeLeft {
-            padding-top: 7px;
+            /*padding-top: 7px;*/
+            position: absolute;
+            bottom: 13px;
+            left: 205px;
         }
+
 
         .svg {
             margin-left: auto;
@@ -91,7 +97,7 @@
 
         .description {
             padding: 0px 0px;
-            height: 106px;
+            height: 130px;
         }
 
         .scroller {
@@ -109,7 +115,7 @@
             <h2 id="book-title"></h2>
             <div onmouseover="scroll_up();" onmouseout="stop_scroll();" class="scroller"></div>
             <p id="book-description" class="description"></p>
-            <div  onmouseover="scroll_down();" onmouseout="stop_scroll();" class="scroller"></div>
+            <div onmouseover="scroll_down();" onmouseout="stop_scroll();" class="scroller"></div>
             <div class="timeLeft">
                 <button class="linkButton" onclick="openBrowser()" id="dotdLink">Free Ebook</button>
                 <p id="book-time-left"></p>
@@ -145,32 +151,33 @@
     }
 
     // https://bytes.com/topic/javascript/answers/791790-div-scroll-mouseover
-    
+
     var scrolling = null;
- 
+
     function scroll_up() {
         var d = document.getElementById('book-description');
- 
+
         d.scrollTop = d.scrollTop - 5;
- 
-        scrolling = window.setTimeout(function() {
+
+        scrolling = window.setTimeout(function () {
             scroll_up();
         }, 100);
     }
- 
+
     function scroll_down() {
         var d = document.getElementById('book-description');
- 
+
         d.scrollTop = d.scrollTop + 5;
- 
-        scrolling = window.setTimeout(function() {
+
+        scrolling = window.setTimeout(function () {
             scroll_down();
         }, 100);
     }
- 
+
     function stop_scroll() {
         window.clearTimeout(scrolling);
     }
 
 </script>
+
 </html>
