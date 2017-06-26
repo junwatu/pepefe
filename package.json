@@ -20,6 +20,7 @@
     "cheerio": "^1.0.0-rc.1",
     "electron": "^1.7.3",
     "electron-positioner": "^3.0.0",
+    "is-online": "^7.0.0",
     "node-schedule": "^1.2.3",
     "request": "^2.81.0"
   }
