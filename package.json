@@ -1,12 +1,14 @@
 {
-  "name": "packtpub-free-ebook",
+  "name": "ppfe",
   "version": "1.0.0",
   "description": "Free ebook desktop notification from PacktPub",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-packager .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=book.ico --prune=true --out=build && npm run exe-info && npm run copy-icon",
+    "exe-info": "scripts\\package-info.bat && npm run copy-icon",
+    "copy-icon": "copy book.png build\\ppfe-win32-ia32"
   },
   "keywords": [
     "ebook",
@@ -27,5 +29,6 @@
   },
   "devDependencies": {
     "electron-packager": "^8.7.2"
-  }
+  },
+  "false": {}
 }
