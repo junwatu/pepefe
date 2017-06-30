@@ -11,6 +11,11 @@ const site = require("./dotdpacktpub");
 const { randomColor } = require("./randomcolor");
 const Store = require('./store');
 
+// could be override by user
+let autohideTime = 30000;
+let reloadHour = 7;
+let reloadMinute = 45;
+
 let browserWindow;
 let dotdBrowserWindow;
 let timeLeft;
@@ -25,10 +30,12 @@ let autohideRuntimeTimer;
 let autohideInitTimer;
 let autohideToggleTimer;
 
+let offlineStatus = false;
+
 let rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [0, new schedule.Range(0, 6)];
-rule.hour = 7;
-rule.minute = 45;
+rule.hour = reloadHour;
+rule.minute = reloadMinute;
 
 function scheduledJob() {
     let z = schedule.scheduleJob(rule, () => {
@@ -45,8 +52,7 @@ function autoHideTimer() {
             browserWindow.hide();
             clearInterval(updateTimeLeft);
         }
-    }, 30000);
-
+    }, autohideTime);
 
     return x;
 }
@@ -93,13 +99,19 @@ function createWindow(onlineStatus) {
     })
 
     const contextMenu = Menu.buildFromTemplate([
+        // Disable for production
         { label: 'DevTools', click: showDevTools },
-        { label: 'Set Time' },
+
+        { label: 'Reload', click: forceReload },
         { label: 'Autostart', type: 'checkbox', click: toggleAutostart },
         { label: 'Autohide', type: 'checkbox', click: toggleAutohide },
         // No ()
         { label: 'Exit', click: quitAllWindows }
     ]);
+
+    function forceReload() {
+        console.log('Reload browser content and update data');
+    }
 
     function toggleAutostart() {
         let autostart = store.get("autostart");
@@ -152,16 +164,7 @@ function createWindow(onlineStatus) {
             }
         };
     }
-
-    function quitAllWindows() {
-        dotdBrowserWindow.destroy();
-        browserWindow.destroy();
-    }
-
-    function showDevTools() {
-        browserWindow.webContents.toggleDevTools();
-    }
-
+    tray.setToolTip('Free ebook from PacktPub')
     tray.setContextMenu(contextMenu);
 
     let bounds = tray.getBounds();
@@ -186,6 +189,15 @@ function createWindow(onlineStatus) {
 
     }, this);
 
+}
+
+function quitAllWindows() {
+    dotdBrowserWindow.destroy();
+    browserWindow.destroy();
+}
+
+function showDevTools() {
+    browserWindow.webContents.toggleDevTools();
 }
 
 function loadDOTD() {
@@ -252,9 +264,11 @@ app.on('ready', () => {
 
     getOnlineStatus().then((status) => {
         if (status === true) {
+            offlineStatus = !status;
             createWindow(true);
         }
         else {
+            offlineStatus = status;
             createWindow(false);
         }
     });
