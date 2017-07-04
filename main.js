@@ -1,6 +1,6 @@
 // github.io/junwatu
 
-const { app, BrowserWindow, ipcMain, Menu, Tray } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, Tray, dialog } = require('electron');
 const path = require('path');
 const url = require('url');
 const schedule = require("node-schedule");
@@ -57,19 +57,24 @@ function autoHideTimer() {
     return x;
 }
 
+const store = new Store({
+    configName: "user-preferences",
+    defaults: {
+        "autostart": false,
+        "autohide": true,
+        "autoreload": {
+            "hour": 07,
+            "minute": 45
+        },
+        "autohideTime": 30000
+    }
+});
+
 function createWindow(onlineStatus) {
     browserWindow = new BrowserWindow({ width: 730, height: 245, frame: false, skipTaskbar: true });
     // Performance (?)
     let randomAwesomeColor = `document.body.style.background="linear-gradient(135deg, #${randomColor()} 0%, #${randomColor()} 100%)";`;
     browserWindow.webContents.executeJavaScript(randomAwesomeColor);
-
-    const store = new Store({
-        configName: "user-preferences",
-        defaults: {
-            "autostart": false,
-            "autohide": true
-        }
-    });
 
     if (onlineStatus === true) {
 
@@ -248,7 +253,19 @@ ipcMain.on('HTMLData', (event, arg) => {
         let stringCommand = `document.getElementById("book-time-left").innerHTML="${arg}"`;
         browserWindow.webContents.executeJavaScript(stringCommand);
     } else {
-        browserWindow.webContents.send('asyncMessage', site.processHTML(arg));
+        // Handle empty data here
+        let data = site.processHTML(arg);
+        // if(data != undefined) {
+        //     browserWindow.webContents.send('asyncMessage', site.processHTML(arg));
+        // } else {
+        dialog.showMessageBox(browserWindow, { type: "info", message: "Something wrong with Packtpub site?" }, (index) => {
+            if (index === 0) {
+                if (process.platform !== 'darwin') {
+                    app.quit();
+                }
+            }
+        });
+        //}
     }
 })
 
