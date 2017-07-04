@@ -32,7 +32,15 @@ function queryData(html) {
     jsonData.description = dotdDescription.trim();
     jsonData.timeLeft = dotdTimeLeft;
 
-    return jsonData;
+    if (jsonData.image && jsonData.title && jsonData.description === null ||
+        jsonData.image && jsonData.title && jsonData.description === "" ||
+        jsonData.image && jsonData.title && jsonData.description === undefined) {
+ 
+        return undefined;
+        
+    } else {
+        return jsonData;
+    }
 }
 
 function processHTML(arg) {
