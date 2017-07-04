@@ -253,19 +253,19 @@ ipcMain.on('HTMLData', (event, arg) => {
         let stringCommand = `document.getElementById("book-time-left").innerHTML="${arg}"`;
         browserWindow.webContents.executeJavaScript(stringCommand);
     } else {
-        // Handle empty data here
+        
         let data = site.processHTML(arg);
-        // if(data != undefined) {
-        //     browserWindow.webContents.send('asyncMessage', site.processHTML(arg));
-        // } else {
-        dialog.showMessageBox(browserWindow, { type: "info", message: "Something wrong with Packtpub site?" }, (index) => {
-            if (index === 0) {
-                if (process.platform !== 'darwin') {
-                    app.quit();
+        if (data != undefined) {
+            browserWindow.webContents.send('asyncMessage', site.processHTML(arg));
+        } else {
+            dialog.showMessageBox(browserWindow, { type: "info", message: "Something wrong with Packtpub site?" }, (index) => {
+                if (index === 0) {
+                    if (process.platform !== 'darwin') {
+                        app.quit();
+                    }
                 }
-            }
-        });
-        //}
+            });
+        }
     }
 })
 
