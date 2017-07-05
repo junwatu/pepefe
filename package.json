@@ -6,10 +6,10 @@
   "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=book.ico --prune=true --out=build && npm run exe-info && npm run copy-icon",
+    "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=book.ico --prune=true --out=build && npm run exe-info && npm run copy-icon && npm run zip",
     "exe-info": "scripts\\package-info.bat && npm run copy-icon",
     "copy-icon": "copy book.png build\\ppfe-win32-ia32",
-    "zip": "scripts\\zip.js"
+    "zip": "node scripts\\zip.js"
   },
   "keywords": [
     "ebook",
@@ -22,13 +22,13 @@
   "license": "MIT",
   "dependencies": {
     "cheerio": "^1.0.0-rc.1",
-    "electron": "^1.7.3",
     "electron-positioner": "^3.0.0",
     "is-online": "^7.0.0",
     "node-schedule": "^1.2.3",
     "request": "^2.81.0"
   },
   "devDependencies": {
+    "electron": "^1.7.3",
     "electron-packager": "^8.7.2",
     "archiver": "^1.3.0"
   },
