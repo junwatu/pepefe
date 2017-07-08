@@ -1,7 +1,9 @@
-# Packtpub Free Ebook Notification
+# Pepefe
 
-Desktop notification for Packtpub free ebook.
+Pepefe is unofficial desktop notification for free ebook from Packtpub.
 
+
+![screenshot](screenshot.png)
 
 MIT License
 
