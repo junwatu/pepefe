@@ -6,10 +6,13 @@ const url = require('url');
 const schedule = require("node-schedule");
 const Positioner = require("electron-positioner");
 const isOnline = require("is-online");
+const bunyan = require('bunyan');
 
 const site = require("./dotdpacktpub");
 const { randomColor } = require("./randomcolor");
 const Store = require('./store');
+
+const log = bunyan.createLogger({ name: "pepefe" })
 
 // could be override by user
 let autohideTime = 30000;
@@ -61,7 +64,7 @@ const store = new Store({
     configName: "user-preferences",
     defaults: {
         "autostart": false,
-        "autohide": true,
+        "autohide": false,
         "autoreload": {
             "hour": 07,
             "minute": 45
@@ -106,15 +109,15 @@ function createWindow(onlineStatus) {
     const contextMenu = Menu.buildFromTemplate([
         // Disable for production
         { label: 'DevTools', click: showDevTools },
-
-        { label: 'Reload', click: forceReload },
-        { label: 'Autostart', type: 'checkbox', click: toggleAutostart },
+        //{ label: 'Reload', click: forceReload },
+        // { label: 'Autostart', type: 'checkbox', click: toggleAutostart },
         { label: 'Autohide', type: 'checkbox', click: toggleAutohide },
         // No ()
         { label: 'Exit', click: quitAllWindows }
     ]);
 
     function forceReload() {
+        // todo: create force reload function
         console.log('Reload browser content and update data');
     }
 
@@ -184,7 +187,7 @@ function createWindow(onlineStatus) {
 
             if (autohideInit === true) {
                 autohideInitTimer = autoHideTimer();
-                console.log('[Init] Will close automatically...');
+                log.info('[Init] Autohide Active');
             }
         }
 
@@ -253,7 +256,7 @@ ipcMain.on('HTMLData', (event, arg) => {
         let stringCommand = `document.getElementById("book-time-left").innerHTML="${arg}"`;
         browserWindow.webContents.executeJavaScript(stringCommand);
     } else {
-        
+
         let data = site.processHTML(arg);
         if (data != undefined) {
             browserWindow.webContents.send('asyncMessage', site.processHTML(arg));
