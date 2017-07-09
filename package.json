@@ -1,7 +1,7 @@
 {
   "name": "pepefe",
   "version": "1.0.0-beta",
-  "description": "Free ebook desktop notification from PacktPub",
+  "description": "Unofficial desktop notification for free ebook from Packtpub",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
