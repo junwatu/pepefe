@@ -7,12 +7,17 @@ const schedule = require("node-schedule");
 const Positioner = require("electron-positioner");
 const isOnline = require("is-online");
 const bunyan = require('bunyan');
+const AutoLaunch = require('auto-launch');
 
 const site = require("./dotdpacktpub");
 const { randomColor } = require("./randomcolor");
 const Store = require('./store');
 
 const log = bunyan.createLogger({ name: "pepefe" })
+
+let pepefeAutostart = new AutoLaunch({
+    name: 'Pepefe'
+})
 
 // could be override by user
 let autohideTime = 30000;
@@ -110,7 +115,7 @@ function createWindow(onlineStatus) {
         // Disable for production
         { label: 'DevTools', click: showDevTools },
         //{ label: 'Reload', click: forceReload },
-        // { label: 'Autostart', type: 'checkbox', click: toggleAutostart },
+        { label: 'Autostart', type: 'checkbox', click: toggleAutostart },
         { label: 'Autohide', type: 'checkbox', click: toggleAutohide },
         // No ()
         { label: 'Exit', click: quitAllWindows }
@@ -124,6 +129,14 @@ function createWindow(onlineStatus) {
     function toggleAutostart() {
         let autostart = store.get("autostart");
         store.set("autostart", !autostart);
+
+        if(autostart === true) {
+          pepefeAutostart.disable();
+          log.info("Autostart disable");
+        } else {
+           pepefeAutostart.enable();
+           log.info("Autostart enable"); 
+        }
     }
 
     function toggleAutohide() {
