@@ -1,4 +1,4 @@
-// github.io/junwatu
+// github.com/junwatu
 
 const { app, BrowserWindow, ipcMain, Menu, Tray, dialog } = require('electron');
 const path = require('path');
@@ -74,7 +74,7 @@ const store = new Store({
 });
 
 function createWindow(onlineStatus) {
-    browserWindow = new BrowserWindow({ width: 730, height: 245, frame: false, skipTaskbar: true });
+    browserWindow = new BrowserWindow({ width: 730, height: 245, frame: false, skipTaskbar: true, resizable: false });
     // Performance (?)
     let randomAwesomeColor = `document.body.style.background="linear-gradient(135deg, #${randomColor()} 0%, #${randomColor()} 100%)";`;
     browserWindow.webContents.executeJavaScript(randomAwesomeColor);
@@ -118,7 +118,7 @@ function createWindow(onlineStatus) {
 
     function forceReload() {
         // todo: create force reload function
-        console.log('Reload browser content and update data');
+        log.info("not yet implemented");
     }
 
     function toggleAutostart() {
@@ -132,21 +132,21 @@ function createWindow(onlineStatus) {
 
         if (browserWindow.isVisible() && !autohide === true) {
             autohideToggleTimer = autoHideTimer();
-            console.log("[AutohideMenu] Will autohide...");
+            log.info("[AutohideMenu] Will autohide...");
         } else {
             if (autohideToggleTimer != null) {
                 clearInterval(autohideToggleTimer);
-                console.log("[AutohideToggle] Reset...");
+                log.info("[AutohideToggle] Reset...");
             }
 
             if (autohideRuntimeTimer != null) {
                 clearInterval(autohideRuntimeTimer);
-                console.log("[AutohideRuntime] Reset...");
+                log.info("[AutohideRuntime] Reset...");
             }
 
             if (autohideInitTimer != null) {
                 clearInterval(autohideInitTimer);
-                console.log("[AutohideInit] Reset...");
+                log.info("[AutohideInit] Reset...");
             }
         }
     }
@@ -168,7 +168,7 @@ function createWindow(onlineStatus) {
 
             if (autohideRuntime === true) {
                 autohideRuntimeTimer = autoHideTimer();
-                console.log("[ShowHideIcon] Will autohide...");
+                log.info("[ShowHideIcon] Will autohide...");
             }
         };
     }
