@@ -15,9 +15,6 @@ const Store = require('./store');
 
 const log = bunyan.createLogger({ name: "pepefe" })
 
-let pepefeAutostart = new AutoLaunch({
-    name: 'Pepefe'
-})
 
 // could be override by user
 let autohideTime = 30000;
@@ -26,19 +23,19 @@ let reloadMinute = 45;
 
 let browserWindow;
 let dotdBrowserWindow;
-let timeLeft;
 let updateTimeLeft;
+let tray;
 
 let timeReload = false;
-let scheduledReload = false;
-
-let jsonData = { image: "", title: "", description: "", timeLeft: "" };
 
 let autohideRuntimeTimer;
 let autohideInitTimer;
 let autohideToggleTimer;
+let offlineStatus;
 
-let offlineStatus = false;
+let pepefeAutostart = new AutoLaunch({
+    name: 'Pepefe'
+})
 
 let rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [0, new schedule.Range(0, 6)];
@@ -71,7 +68,7 @@ const store = new Store({
         "autostart": false,
         "autohide": false,
         "autoreload": {
-            "hour": 07,
+            "hour": 7,
             "minute": 45
         },
         "autohideTime": 30000
@@ -121,10 +118,10 @@ function createWindow(onlineStatus) {
         { label: 'Exit', click: quitAllWindows }
     ]);
 
-    function forceReload() {
-        // todo: create force reload function
-        log.info("not yet implemented");
-    }
+    // function forceReload() {
+    //     // todo: implement force reload function
+    //     log.info("not yet implemented");
+    // }
 
     function toggleAutostart() {
         let autostart = store.get("autostart");
@@ -165,6 +162,10 @@ function createWindow(onlineStatus) {
     }
 
     function showHide() {
+        
+        if(offlineStatus === false) {
+           // todo: implement force reload
+        }
 
         let autohideRuntime = store.get("autohide");
 
@@ -256,9 +257,9 @@ async function getOnlineStatus() {
     return onlineStatus;
 }
 
-ipcMain.on('asyncData', (event, arg) => {
+ipcMain.on('asyncData', () => {
 
-    dotdBrowserWindow.webContents.on('dom-ready', (event, url) => {
+    dotdBrowserWindow.webContents.on('dom-ready', () => {
         updateData();
     })
 })
