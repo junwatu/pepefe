@@ -1,5 +1,5 @@
 {
-  "name": "ppfe",
+  "name": "pepefe",
   "version": "1.0.0-beta",
   "description": "Free ebook desktop notification from PacktPub",
   "main": "main.js",
@@ -7,20 +7,22 @@
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=book.ico --prune=true --out=build && npm run exe-info && npm run copy-icon && npm run zip",
-    "exe-info": "scripts\\package-info.bat && npm run copy-icon",
-    "copy-icon": "copy book.png build\\ppfe-win32-ia32",
-    "zip": "node scripts\\zip.js"
+    "exe-info": "scripts/package-info.bat && npm run copy-icon",
+    "copy-icon": "copy book.png build/pepefe-win32-ia32",
+    "zip": "node scripts/zip.js"
   },
   "keywords": [
     "ebook",
     "free",
     "desktop",
     "electron",
-    "packtpub"
+    "packtpub",
+    "notification"
   ],
   "author": "Equan Pr.",
   "license": "MIT",
   "dependencies": {
+    "bunyan": "^1.8.10",
     "cheerio": "^1.0.0-rc.1",
     "electron-positioner": "^3.0.0",
     "is-online": "^7.0.0",
