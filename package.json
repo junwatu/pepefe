@@ -7,9 +7,9 @@
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=book.ico --prune=true --out=build && npm run exe-info && npm run copy-icon && npm run zip",
-    "exe-info": "scripts/package-info.bat && npm run copy-icon",
-    "copy-icon": "copy book.png build/pepefe-win32-ia32",
-    "zip": "node scripts/zip.js"
+    "exe-info": "scripts\\package-info.bat && npm run copy-icon",
+    "copy-icon": "copy book.png build\\pepefe-win32-ia32",
+    "zip": "node scripts\\zip.js"
   },
   "keywords": [
     "ebook",
