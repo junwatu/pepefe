@@ -6,6 +6,11 @@ Pepefe is unofficial desktop notification for free ebook from Packtpub.
 ![screenshot](screenshot.png)
 
 
+- Autostart when os start, default is false.
+- Autohide, default is false.
+- Double click tray icon to show or hide app.
+- Schedule reload at 7.45 am.
+
 ## Install
 Download and unzip binary file from https://github.com/junwatu/pepefe/releases 
 
