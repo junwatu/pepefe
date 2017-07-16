@@ -9,7 +9,8 @@
     "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=book.ico --prune=true --out=build && npm run exe-info && npm run copy-icon && npm run zip",
     "exe-info": "scripts\\package-info.bat && npm run copy-icon",
     "copy-icon": "copy book.png build\\pepefe-win32-ia32",
-    "zip": "node scripts\\zip.js"
+    "zip": "node scripts\\zip.js",
+    "setup": "node scripts\\winsetup.js"
   },
   "keywords": [
     "ebook",
@@ -31,9 +32,11 @@
     "request": "^2.81.0"
   },
   "devDependencies": {
+    "archiver": "^1.3.0",
     "electron": "^1.7.3",
     "electron-packager": "^8.7.2",
-    "archiver": "^1.3.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-winstaller": "^2.6.3"
   },
   "false": {}
 }
