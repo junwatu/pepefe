@@ -1,4 +1,7 @@
 // github.com/junwatu
+init();
+const { handle  } = require('./setupevent');
+handle();
 
 const { app, BrowserWindow, ipcMain, Menu, Tray, dialog } = require('electron');
 const path = require('path');
@@ -6,14 +9,12 @@ const url = require('url');
 const schedule = require("node-schedule");
 const Positioner = require("electron-positioner");
 const isOnline = require("is-online");
-const bunyan = require('bunyan');
 const AutoLaunch = require('auto-launch');
 
 const site = require("./dotdpacktpub");
 const { randomColor } = require("./randomcolor");
 const Store = require('./store');
-
-const log = bunyan.createLogger({ name: "pepefe" })
+const { log } = require('./log')
 
 
 // could be override by user
@@ -41,6 +42,12 @@ let rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [0, new schedule.Range(0, 6)];
 rule.hour = reloadHour;
 rule.minute = reloadMinute;
+
+function init() {
+    if (require('electron-squirrel-startup')) {
+        return;
+    }
+}
 
 function scheduledJob() {
     let z = schedule.scheduleJob(rule, () => {
@@ -127,12 +134,12 @@ function createWindow(onlineStatus) {
         let autostart = store.get("autostart");
         store.set("autostart", !autostart);
 
-        if(autostart === true) {
-          pepefeAutostart.disable();
-          log.info("Autostart disable");
+        if (autostart === true) {
+            pepefeAutostart.disable();
+            log.info("Autostart disable");
         } else {
-           pepefeAutostart.enable();
-           log.info("Autostart enable"); 
+            pepefeAutostart.enable();
+            log.info("Autostart enable");
         }
     }
 
@@ -162,9 +169,9 @@ function createWindow(onlineStatus) {
     }
 
     function showHide() {
-        
-        if(offlineStatus === false) {
-           // todo: implement force reload
+
+        if (offlineStatus === false) {
+            // todo: implement force reload
         }
 
         let autohideRuntime = store.get("autohide");
