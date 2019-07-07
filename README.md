@@ -1,3 +1,5 @@
+<img src="https://electronjs.org/app-img/pepefe/pepefe-icon-128.png">
+
 # Pepefe
 
 Pepefe is unofficial desktop notification for free ebook from Packtpub.
